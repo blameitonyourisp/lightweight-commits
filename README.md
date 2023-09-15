@@ -33,6 +33,19 @@ This document proposes a lightweight and opinionated standard for writing git co
 
 ## Motivation
 
+The main motivation behind creating this standard for writing git commits is a personal drive to standardise the way I write git commits in my own projects. Please see the following list of goals in writing this standard:
+
+1. Reduce unnecessary characters in the title of the git commit, maximising the space available for the summary[^1]
+2. Reduce potential ambiguity on the usage of [conventional commit format](https://www.conventionalcommits.org/en/v1.0.0) nouns[^2]
+3. Reduce overlap between  [conventional commit format](https://www.conventionalcommits.org/en/v1.0.0) nouns, git commit summary lead imperative verbs, and changelog sections suggested by the [keep a changelog](https://keepachangelog.com/en/1.1.0) project[^3]
+4. Increase clarity with respect to the impact a commit will have on the [semver](https://semver.org/) version number of a package 
+5. Increase git log utility in automatically generating prompts for package changelogs upon release of a new version
+6. Increase visual uniformity across git commit titles so that they can be scanned more easily when they are logged
+
+[^1]: Given that the title is limited to 50 characters, ideally we should spend as few characters as possible on writing meta data about the commit into our title. For instance the scope of the commit is largely superfluous, as it can either be seen in the path of the git log, or written in the [git trailers](https://git-scm.com/docs/git-interpret-trailers), and is therefore a waste of characters.
+[^2]: Some of the conventional commit standard nouns have ambiguous or different usages across repositories. For example, the `feat` (feature) noun is described by the documentation as being used for new features leading to ambiguity with respect to what noun should be used for minor *modifications* to features; should it be a feature change even though it is not strictly an entirely new feature, or should it be something else, and if so what should it be given that no other noun obviously fits? See [here](https://stackoverflow.com/questions/64290635/how-to-classify-ui-change-according-to-the-conventional-commits-specification) for an example of a discussion of this topic. See [here](https://stackoverflow.com/questions/48075169/semantic-commit-type-when-remove-something) for similar queries regarding the removal of a feature.
+[^3]: Some of the [conventional commit format](https://www.conventionalcommits.org/en/v1.0.0) standard nouns imply the imperative mood summary verb that will be used, causing a repetition of information in the title which is inefficient for given the character limit of the title. For example, the `fix` (fix) noun will nearly always imply the verb "Fix" at the start of the commit summary in order to have a standalone commit summary that makes sense: `fix: Fix this bug` vs `fix: This bug` (in the first example we see duplicate information in the commit title, and in the second sense the commit summary does not make any sense as a standalone sentence).
+
 ## Format
 
 ## Title Nouns
