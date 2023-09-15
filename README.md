@@ -148,16 +148,33 @@ Each git commit title must begin with a three letter title noun abbreviation. Th
 ### Conventional Commit Format
 The lightweight commit title noun should not be confused with the title nouns suggested by the [conventional commit format](https://www.conventionalcommits.org/en/v1.0.0), which often indicate both the type of code being changed *and* the type of change being made (for example the `fix` (fix) noun indicates both that the commit makes changes to a part of the internal/external API *and* that the nature of the change fixes a bug). The lightweight commit format strictly separates these concerns, using the noun to reflect only the type of code being changed.
 
-### Internal & External Changes
+### Internal Changes
 In some cases (for example where a performance issue, bug etc. propagates from the internal API to the external API), changes to the internal API may require updates to the patch number (or even minor change number where appropriate) of the [semver](https://semver.org/) version number of the repository/distributed code. In these cases it will be possible to see commit titles starting `int~` rather than the expected `int=` reflecting that internal changes will not normally update the version number.
 
 ### Chores
 The [conventional commit format](https://www.conventionalcommits.org/en/v1.0.0) suggests only `chore` (chore) as the title noun for non code-related changes, however also suggests `docs` (documentation) for use with changes to documentation. The lightweight commit format suggests further division of non code-related changes into `doc` (documentation), `cfg` (config), and `msc` (any other miscellaneous chore such as asset management). This is due to the fact that configuration is usually an important and technical aspect of any project/repository, and changes of to the configuration should ideally be separated from other solely miscellaneous managerial tasks (i.e. separating technical config chores from chores which are less technical in nature).
 
-### Build, Revert & Merge
+### Exceptions
 Exceptions are made for the `bld`, `rvt`, and `mrg` nouns, which do not reflect the type of code being changed, but instead are reserved nouns for special types of commit which do not have exact subjects: running a build command should not change source code; changes when reverting a commit depend on the nature of the reverted commit; merge commits do not change code, only change branches in the git history. In this case the title noun is simply a contraction of the summary verb.
 
 ## Semver Flags
+
+Following the [title noun](#title-nouns) of the commit title, each title must contain a [semver](https://semver.org/) flag indicating the impact a commit will have on the [semver](https://semver.org/) version number of a package. Please see the following list for all of the available flags and their usage:
+
+1. `!` Breaking change to the external API, requiring [semver](https://semver.org/) major update
+2. `^` Minor change to the external API, requiring [semver](https://semver.org/) minor update
+3. `~` Patch to the external API, requiring [semver](https://semver.org/) patch update
+4. `=` Internal change which does not propagate changes to the external API, and therefore does not require [semver](https://semver.org/) change or changelog entry
+5. `?` Other, reserved for build and revert commits
+
+These flags are chosen to be as consistent with current standards as possible, based on the following factors:
+
+1. Existing use of `!` (exclamation mark) flag to notify breaking changes by the [conventional commit format](https://www.conventionalcommits.org/en/v1.0.0)
+2. Existing use of the `^` (caret) and `~` (tilde) flags to denote version ranges of software packages used in project in, such as in a `package.json` file [explained here](https://nodesource.com/blog/semver-tilde-and-caret/)
+3. `=` (equal sign) flag to indicate that changes make no difference to the version of the distributed software/external API
+4. `?` (question mark) flag to denote the fact that the version change of a given commit is uncertain
+
+The [semver](https://semver.org/) flag should always be decided solely based on the minimum type of version change (i.e. major, minor, patch, or unchanged) that will be required at the next build/software release. Note that the minimum version change at the next release is determined by changes to the *external* API; i.e. version numbers are for end users, and commits are for developers (see these [version increment](https://gitversion.net/docs/reference/version-increments) and [breaking vs non-breaking change](https://github.com/microsoft/FluidFramework/wiki/Breaking-vs-Non-breaking-Changes) notes for more). Please see Although certain [title nouns](#title-nouns) and or [summary verbs](#summary-verbs) will commonly be used with certain flags, the [title nouns](#title-nouns) and [summary verbs](#summary-verbs) can in no way mandate the use of a given [semver](https://semver.org/) flag.
 
 ## Summary Verbs
 
