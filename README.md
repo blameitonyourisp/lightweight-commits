@@ -29,22 +29,22 @@ An opinionated standard for writing git commit messages, focused mainly on consi
 
 ## Summary
 
-This document proposes a lightweight and opinionated standard for writing git commit messages called simply the lightweight commit format. The lightweight commit format is heavily inspired and influenced by the [conventional commit format][], and by the [keep a changelog][] project. Note that the lightweight commit format has no strict direction with respect to the size of a commit, however for best results it is advised that developers keep their commits as small as possible, preferably adopting [atomic commits][] wherever possible. In this manner, commits will be concerned with only one "thing", and therefore concise commit messages will be easier to write.
+This document proposes a lightweight and opinionated standard for writing git commit messages called simply the lightweight commit format. The lightweight commit format is heavily inspired and influenced by the [conventional commit format](https://www.conventionalcommits.org/en/v1.0.0), and by the [keep a changelog](https://keepachangelog.com/en/1.1.0) project. Note that the lightweight commit format has no strict direction with respect to the size of a commit, however for best results it is advised that developers keep their commits as small as possible, preferably adopting [atomic commits](https://en.wikipedia.org/wiki/Atomic_commit) wherever possible. In this manner, commits will be concerned with only one "thing", and therefore concise commit messages will be easier to write.
 
 ## Motivation
 
 The main motivation behind creating this standard for writing git commits is a personal drive to standardise the way I write git commits in my own projects. Please see the following list of goals in writing this standard:
 
 1. Reduce unnecessary characters in the title of the git commit, maximising the space available for the summary [^1]
-2. Reduce potential ambiguity on the usage of [conventional commit format][] nouns [^2]
-3. Reduce overlap between [conventional commit format][] nouns, git commit summary lead imperative verbs, and changelog sections suggested by the [keep a changelog][] project [^3]
-4. Increase clarity with respect to the impact a commit will have on the [semver][] version number of a package 
+2. Reduce potential ambiguity on the usage of [conventional commit format](https://www.conventionalcommits.org/en/v1.0.0) nouns [^2]
+3. Reduce overlap between [conventional commit format](https://www.conventionalcommits.org/en/v1.0.0) nouns, git commit summary lead imperative verbs, and changelog sections suggested by the [keep a changelog](https://keepachangelog.com/en/1.1.0) project [^3]
+4. Increase clarity with respect to the impact a commit will have on the [semver](https://semver.org/) version number of a package 
 5. Increase git log utility in automatically generating prompts for package changelogs upon release of a new version
 6. Increase visual uniformity across git commit titles so that they can be scanned more easily when they are logged
 
-[^1]: Given that the title is limited to 50 characters, ideally we should spend as few characters as possible on writing meta data about the commit into our title. For instance the scope of the commit is largely superfluous, as it can either be seen in the path of the git log, or written in the [git trailers][], and is therefore a waste of characters.
-[^2]: Some of the [conventional commit format][] standard nouns have ambiguous or different usages across repositories. For example, the `feat` (feature) noun is described by the documentation as being used for new features leading to ambiguity with respect to what noun should be used for minor *modifications* to features; should it be a feature change even though it is not strictly an entirely new feature, or should it be something else, and if so what should it be given that no other noun obviously fits? See [here](https://stackoverflow.com/questions/64290635/how-to-classify-ui-change-according-to-the-conventional-commits-specification) for an example of a discussion of this topic. See [here](https://stackoverflow.com/questions/48075169/semantic-commit-type-when-remove-something) for similar queries regarding the removal of a feature.
-[^3]: Some of the [conventional commit format][] standard nouns imply the imperative mood summary verb that will be used, causing a repetition of information in the title which is inefficient for given the character limit of the title. For example, the `fix` (fix) noun will nearly always imply the verb "Fix" at the start of the commit summary in order to have a standalone commit summary that makes sense: `fix: Fix this bug` vs `fix: This bug` (in the first example we see duplicate information in the commit title, and in the second sense the commit summary does not make any sense as a standalone sentence).
+[^1]: Given that the title is limited to 50 characters, ideally we should spend as few characters as possible on writing meta data about the commit into our title. For instance the scope of the commit is largely superfluous, as it can either be seen in the path of the git log, or written in the [git trailers](https://git-scm.com/docs/git-interpret-trailers), and is therefore a waste of characters.
+[^2]: Some of the [conventional commit format](https://www.conventionalcommits.org/en/v1.0.0) standard nouns have ambiguous or different usages across repositories. For example, the `feat` (feature) noun is described by the documentation as being used for new features leading to ambiguity with respect to what noun should be used for minor *modifications* to features; should it be a feature change even though it is not strictly an entirely new feature, or should it be something else, and if so what should it be given that no other noun obviously fits? See [here](https://stackoverflow.com/questions/64290635/how-to-classify-ui-change-according-to-the-conventional-commits-specification) for an example of a discussion of this topic. See [here](https://stackoverflow.com/questions/48075169/semantic-commit-type-when-remove-something) for similar queries regarding the removal of a feature.
+[^3]: Some of the [conventional commit format](https://www.conventionalcommits.org/en/v1.0.0) standard nouns imply the imperative mood summary verb that will be used, causing a repetition of information in the title which is inefficient for given the character limit of the title. For example, the `fix` (fix) noun will nearly always imply the verb "Fix" at the start of the commit summary in order to have a standalone commit summary that makes sense: `fix: Fix this bug` vs `fix: This bug` (in the first example we see duplicate information in the commit title, and in the second sense the commit summary does not make any sense as a standalone sentence).
 
 ## Format
 
@@ -57,7 +57,7 @@ With respect to general formatting, the commit title should have a maximum lengt
 The title must have a maximum length of 50 characters, and should have the format shown in the code block immediately above. Please see below for details on each component:
 
 1. `<noun-abbr>` - Three letter noun abbreviation describing the *type* of the *object* of a commit ([see here](#title-nouns))
-2. `<semver-flag>` - Single character flag describing the impact a commit will have on the [semver][] version number of a package ([see here](#semver-flags))
+2. `<semver-flag>` - Single character flag describing the impact a commit will have on the [semver](https://semver.org/) version number of a package ([see here](#semver-flags))
 3. `<whitespace>` - Single space separating the summary
 4. `<summary>` - Summary of commit in imperative mood, starting in uppercase, not ending with a ".", and leading with a verb describing the *type* of *changes* a commit makes. The summary should make sense as standalone sentence ([see here](#summary-verbs))
 
@@ -67,7 +67,7 @@ The body must be separated from the title by *one* (1) blank line. The body must
 
 1. Each named section must start with `<SECTION_NAME>: ` (ALL_CAPS_NAME-colon-space) *inline* with the first paragraph of that section
 2. Each section must be separated from the next by a single blank line
-3. Each section may itself be made up of multiple paragraphs, and may contain the following simple, human-readable markup [^4] (only four main markup features are used, all taken from standard [markdown syntax][], and comprising a minimum set of features required for writing succinct commits):
+3. Each section may itself be made up of multiple paragraphs, and may contain the following simple, human-readable markup [^4] (only four main markup features are used, all taken from standard [markdown syntax](https://www.markdownguide.org/basic-syntax), and comprising a minimum set of features required for writing succinct commits):
 	1. Paragraphs separated by single blank lines
 	2. Markdown style italic emphasis using single asterisks around a word/phrase to highlight it [^5]
 	3. Markdown style lists nested to any required depth (starting with no padding)
@@ -98,7 +98,7 @@ The body should *not* explain the "how?" of the commit; this should either be se
 
 ### Footer
 
-The footer must be separated from the body of the commit by *one* (1) blank line. The footer should take the following format (note that where both footer sections are used, the [git trailers][] *must* come second):
+The footer must be separated from the body of the commit by *one* (1) blank line. The footer should take the following format (note that where both footer sections are used, the [git trailers](https://git-scm.com/docs/git-interpret-trailers) *must* come second):
 
 1. Optional reference section
 	1. Each reference may either be a link reference or a text reference which expands on/explains a concept in the commit body
@@ -107,10 +107,10 @@ The footer must be separated from the body of the commit by *one* (1) blank line
 	4. Link references must occupy *one* (1) line only, and may be longer than the 72 character limit if a long link is required
 	5. For each reference of either type, follow the format `[^<ref-name>]: <reference>` (bracket-caret-name-bracket-colon-space-link)
 	6. The default `<ref-name>` (reference name) is a set of sequential numbers
-2. Blank line if both references *and* [git trailers][] are used ([git trailers][] must be separated from references by *one* (1) blank line for correct parsing)
-3. Optional [git trailers][] section (see below for details)
+2. Blank line if both references *and* [git trailers](https://git-scm.com/docs/git-interpret-trailers) are used ([git trailers](https://git-scm.com/docs/git-interpret-trailers) must be separated from references by *one* (1) blank line for correct parsing)
+3. Optional [git trailers](https://git-scm.com/docs/git-interpret-trailers) section (see below for details)
 
-The end of the footer must be comprised only of a series of [git trailers][], which must each be a maximum of 72 characters. Note that [git trailers][] are key value pairs which may be parsed by git from the end of each commit, they should be formatted as follows:
+The end of the footer must be comprised only of a series of [git trailers](https://git-scm.com/docs/git-interpret-trailers), which must each be a maximum of 72 characters. Note that [git trailers](https://git-scm.com/docs/git-interpret-trailers) are key value pairs which may be parsed by git from the end of each commit, they should be formatted as follows:
 
 1. Of the form `<key>: <value>` (key-colon-space-value)
 2. Keys must be written in kebab-case (preferably lowercase)
@@ -119,7 +119,7 @@ The end of the footer must be comprised only of a series of [git trailers][], wh
 5. Each trailer occupies one line only, with a maximum length of 72 characters (i.e. no multi-line trailers allowed) 
 6. Trailers must follow each other directly without empty lines between them
 
-Additionally, [git trailers][] follow the [RFC 822 format][] for email headers. Strictly speaking this implies the usage of "Uppercase-Kebab-Case", obviously this is not a strict requirement, and for the lightweight commit format, "lowercase-kebab-case" for trailer keys is preferred simply for aesthetic reasons.
+Additionally, [git trailers](https://git-scm.com/docs/git-interpret-trailers) follow the [RFC 822 format](http://clweb.csa.iisc.ac.in/gaurav/np/rfcs/mailmime.html) for email headers. Strictly speaking this implies the usage of "Uppercase-Kebab-Case", obviously this is not a strict requirement, and for the lightweight commit format, "lowercase-kebab-case" for trailer keys is preferred simply for aesthetic reasons.
 
 Trailers can be used for storing values including, but not limited to some of the following examples (the entire value of the trailer key value pair is parsed by git as string, and it is up to the user to interpret these strings as required):
 
@@ -128,7 +128,7 @@ Trailers can be used for storing values including, but not limited to some of th
 3. `scope: <path/to/module>`
 4. `issues: array of related issue ids`
 
-Most [git trailers][] are used for automation processes such as closing issues. In order to [parse git trailers](#parsing-git-trailers), the value of each git trailer should follow a known and expected format (git trailer values can be any arbitrarily formatted string, although obviously this is pointless for the purposes of automation etc.). The expected format for a given trailer value will depend on the implementation of commit parsing/automation within your repository. For example the `co-authored-by: <git-user>` may be expected to have a value formatted as and email. In any case, it is recommended that when parsing [git trailers][], the value is interpreted as an array generated form the string value of the trailer split on single whitespace characters. In this case git trailers with array-like values are possible, and in the edge cases where a full string is required, the original string can be recovered by joining the array.
+Most [git trailers](https://git-scm.com/docs/git-interpret-trailers) are used for automation processes such as closing issues. In order to [parse git trailers](#parsing-git-trailers), the value of each git trailer should follow a known and expected format (git trailer values can be any arbitrarily formatted string, although obviously this is pointless for the purposes of automation etc.). The expected format for a given trailer value will depend on the implementation of commit parsing/automation within your repository. For example the `co-authored-by: <git-user>` may be expected to have a value formatted as and email. In any case, it is recommended that when parsing [git trailers](https://git-scm.com/docs/git-interpret-trailers), the value is interpreted as an array generated form the string value of the trailer split on single whitespace characters. In this case git trailers with array-like values are possible, and in the edge cases where a full string is required, the original string can be recovered by joining the array.
 
 ## Title Nouns
 
@@ -171,10 +171,3 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY  CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,  TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-[conventional commit format]: https://www.conventionalcommits.org/en/v1.0.0
-[keep a changelog]: https://keepachangelog.com/en/1.1.0
-[atomic commits]: https://en.wikipedia.org/wiki/Atomic_commit
-[semver]: https://semver.org/
-[git trailers]: https://git-scm.com/docs/git-interpret-trailers
-[markdown syntax]: https://www.markdownguide.org/basic-syntax
-[RFC 822 format]: http://clweb.csa.iisc.ac.in/gaurav/np/rfcs/mailmime.html
