@@ -79,7 +79,7 @@ The body must be separated from the title by *one* (1) blank line. The body must
 		1. Any link will be inserted using markdown references in order to prevent awkward line wrapping and/or the body of the commit having lines longer than 72 characters where long links are required
 		2. Markdown references may also be used to provide additional text information/explanation which would otherwise clutter the body of the commit or adversely affect readability 
 		3. To insert a reference in the body of the commit, use `[^<ref-name>]` (bracket-caret-name-bracket) inline with the text where the link/explanation would be placed
-		4. To provide the footer reference for a given number, use `[^<ref-name>]: <reference>` (bracket-caret-name-bracket-colon-space-link) in the footer section ([[lightweight-commit-format#Footer|see here]])
+		4. To provide the footer reference for a given number, use `[^<ref-name>]: <reference>` (bracket-caret-name-bracket-colon-space-link) in the footer section ([see here](#footer))
 		5. Use sequential numbers for the default `<ref-name>` (reference name), or alternatively use *unique* custom strings which identify/briefly describe the reference (do *not* use "see here" or other generic strings, as these will not be uniquely identifiable in the footer)
 
 The body should contain some or all of the following named sections, describing changes in imperative mood prose consistent with the commit title (the named sections included in a given commit body should also follow the order listed below):
@@ -131,6 +131,31 @@ Trailers can be used for storing values including, but not limited to some of th
 Most [git trailers](https://git-scm.com/docs/git-interpret-trailers) are used for automation processes such as closing issues. In order to [parse git trailers](#parsing-git-trailers), the value of each git trailer should follow a known and expected format (git trailer values can be any arbitrarily formatted string, although obviously this is pointless for the purposes of automation etc.). The expected format for a given trailer value will depend on the implementation of commit parsing/automation within your repository. For example the `co-authored-by: <git-user>` may be expected to have a value formatted as and email. In any case, it is recommended that when parsing [git trailers](https://git-scm.com/docs/git-interpret-trailers), the value is interpreted as an array generated form the string value of the trailer split on single whitespace characters. In this case git trailers with array-like values are possible, and in the edge cases where a full string is required, the original string can be recovered by joining the array.
 
 ## Title Nouns
+
+Each git commit title must begin with a three letter title noun abbreviation. This abbreviation is a noun reflecting the type/location/scope of code being affected by the commit, i.e. the *type* of the *subject* of the commit. The type of code change being made to the subject of the commit is described by the [summary verb](#summary-verbs). Please see the following table for the recommended title nouns.
+
+| Abbreviation | Expanded          | Description                                                  |
+| ------------ | ----------------- | ------------------------------------------------------------ |
+| `cfg`        | config            | Changes to any configuration file                            |
+| `doc`        | documents         | Changes to any documentation file, or changes which only concern code comments |
+| `ext`        | external features | Changes to the external API, i.e. any changes to code which change external functionality and how the users interact with the repository |
+| `int`        | internal features | Changes to the internal API, i.e. any changes to code which only affect internal functionality and other developers, and do *not* change the external API |
+| `msc`        | miscellaneous     | Changes to any other part of the repository that are not covered above, for instance asset management |
+| `bld`        | build             | Reserved noun for build commits, usually triggering a new release |
+| `rvt`        | revert            | Reserved noun for revert commits                             |
+| `mrg`        | merge             | Reserved noun for merge commits                              |
+
+### Conventional Commit Format
+The lightweight commit title noun should not be confused with the title nouns suggested by the [conventional commit format](https://www.conventionalcommits.org/en/v1.0.0), which often indicate both the type of code being changed *and* the type of change being made (for example the `fix` (fix) noun indicates both that the commit makes changes to a part of the internal/external API *and* that the nature of the change fixes a bug). The lightweight commit format strictly separates these concerns, using the noun to reflect only the type of code being changed.
+
+### Internal & External Changes
+In some cases (for example where a performance issue, bug etc. propagates from the internal API to the external API), changes to the internal API may require updates to the patch number (or even minor change number where appropriate) of the [semver](https://semver.org/) version number of the repository/distributed code. In these cases it will be possible to see commit titles starting `int~` rather than the expected `int=` reflecting that internal changes will not normally update the version number.
+
+### Chores
+The [conventional commit format](https://www.conventionalcommits.org/en/v1.0.0) suggests only `chore` (chore) as the title noun for non code-related changes, however also suggests `docs` (documentation) for use with changes to documentation. The lightweight commit format suggests further division of non code-related changes into `doc` (documentation), `cfg` (config), and `msc` (any other miscellaneous chore such as asset management). This is due to the fact that configuration is usually an important and technical aspect of any project/repository, and changes of to the configuration should ideally be separated from other solely miscellaneous managerial tasks (i.e. separating technical config chores from chores which are less technical in nature).
+
+### Build, Revert & Merge
+Exceptions are made for the `bld`, `rvt`, and `mrg` nouns, which do not reflect the type of code being changed, but instead are reserved nouns for special types of commit which do not have exact subjects: running a build command should not change source code; changes when reverting a commit depend on the nature of the reverted commit; merge commits do not change code, only change branches in the git history. In this case the title noun is simply a contraction of the summary verb.
 
 ## Semver Flags
 
