@@ -286,6 +286,109 @@ mrg? Merge branchA into branchB
 
 ## Template
 
+Using a git commit template can make it easier to create uniformly formatted git commits, and can serve as a good aide memoir for following custom formats. The git commit template can be set by pointing the git config to your message file as follows `git config --global commit.template ~/.gitmessage`. See the following code block for my commit template, or view the file at `~/.gitmessage`.
+
+```bash
+
+# <--           MAX_TITLE_WIDTH_50           --> #
+# NOTE: Existing blank lines MUST be preserved for spacing between commit blocks
+# TITLE: Git title MUST take the form "<noun><semver-flag> <summary>":
+#   - Title noun describing type of the subject of commit:
+#       - <cfg> Changes to any configuration file
+#       - <doc> Changes to any documentation file or source code comments
+#       - <ext> Changes to the external API
+#       - <int> Changes to the internal API
+#       - <msc> Changes to any other part of the repository
+#       - <bld> Reserved noun for build commits
+#       - <rvt> Reserved noun for revert commits
+#       - <mrg> Reserved noun for merge commits
+#   - SemVer flag indicating minimum update required at next release:
+#       - <!> Breaking change requiring semver major update
+#       - <^> Minor change requiring semver minor update
+#       - <~> Patch requiring semver patch update 
+#       - <=> Internal change not requiring semver change or changelog entry
+#       - <?> Other, reserved for build and revert commits
+#   - Summary imperative mood, starting in uppercase, and not ending with a ".":
+#       - Feature lifecycle changes:
+#           - <Add> Addition of a new feature
+#           - <Modify> Patch, forward & backward compatible changes to a feature
+#           - <Change> Minor, backward compatible only changes to a feature
+#           - <Rewrite> Major, breaking changes to a feature
+#           - <Deprecate> Deprecate a feature for future removal
+#           - <Remove> Remove a previously deprecated feature
+#       - Fixes and tests:
+#           - <Fix> Bug fixes
+#           - <Test> Changes, additions, and removals from the test suite
+#           - <Secure> Change or bug fix addressing security of a feature
+#           - <Improve> Change or bug fix improving performance of a feature
+#       - Code style:
+#           - <Lint> Lint code (formatting ONLY, no change to released code)
+#           - <Refactor> Minor changes to names and statement orders etc.
+#       - Dependencies (including required changes made upon version change):
+#           - <Bump> Bump (semver patch) version of a dependency
+#           - <Update> Update (semver minor) version of a dependency
+#           - <Upgrade> Upgrade (semver major) version of a dependency
+#           - <Migrate> Migrate to a different dependency
+#       - Build, revert, and merge commits:
+#           - <Build> Build new release
+#           - <Revert> Revert commit using reverted commit hash as rest of title
+#           - <Merge> Merge commits
+
+# INSERT BODY AT THIS COMMENT                                                <--    
+# <--                      WRAP_BODY_WIDTH_72                      --> #
+# BODY: Series of named sections which MUST take the following format:
+#   - "<SECTION_NAME>: " inline with the first paragraph of that section
+#   - Each section MUST use imperative mood prose to describe changes
+#   - Each section MUST be separated from the next by a single blank line
+#   - Each section MAY contain the following markup in markdown format:
+#       - Paragraphs separated by single blank lines
+#       - Italic emphasis (single asterisks around word/phrase)
+#       - Ordered and unordered lists nested as required (starting at 0 padding)
+#           - Ordered lists deliminator MUST be "<number>. " (number-dot-space)
+#           - Unordered list deliminator MUST be "- " (dash-space)
+#       - References using caret notation
+#           - Each body reference MUST be of the form "[^<ref-name>]"
+#           - ALL links MUST be inserted using references to prevent overflow
+#           - Text references MAY be used for additional explanation
+#           - Reference names MUST be unique
+#           - Use sequential numbers for the default reference name
+# The body MUST contain some or all of the following named sections:
+#   - <WHAT> Details of change(s) made in this commit
+#       - Summarise changes in an expanded manner with respect to the title
+#       - Compare new functionality with old functionality
+#   - <WHY> Motivations behind these changes and why they are required
+#   - <MIGRATION> Provide migration notes for any breaking changes
+#   - <OTHER> Other details which strictly do not fit into the above groups
+# For each included section, follow the order listed above.
+# Do NOT include the "how?" of the commit (this should be in documentation).
+
+# INSERT REFERENCES AT THIS COMMENT                                          <--
+# <--                   WRAP_REFERENCES_WIDTH_72                   --> #
+# FOOTER_REFERENCES: Markdown style references which MUST be of the format:
+#   - Each footer reference MUST be of the form "[^<ref-name>]: <reference>"
+#   - Each reference MUST start on a new line
+#   - No blank lines between references
+#   - Every reference in the body MUST have matching value in footer
+#   - Text references MUST form 1 paragraph wrapped at 72 chars
+#   - Link references MUST occupy ONLY 1 line, but MAY be longer than 72 chars
+
+# INSERT GIT TRAILERS AT THIS COMMENT                                        <--
+# <--                   MAX_GIT_TRAILER_WIDTH_72                   --> #
+# FOOTER_TRAILERS: One line key-value git trailers following RFC 822 format:
+#   - Each trailer MUST be of the form "<key>: <value>"
+#   - Keys MUST be written in kebab-case (preferably lowercase)
+#   - ONLY 1 line per trailer, each trailer MUST have a max length of 72 chars
+#   - For array-like values, write trailer as a space separated list of values
+#   - Trailers MUST follow each other directly without empty lines between them
+# For example:
+#   - "closes: <issue-id>"
+#   - "scope: <path/to/module>"
+#   - "issues: array of related issue ids"
+
+```
+
+Note that git will ignore trailing whitespace, and will ignore double line breaks by default, so in the git template message example above, whether you include git trailers and or references, the footer will be correctly separated from the body of the commit by only one blank line.
+
 ## Changelog
 
 ### Parsing Git Trailers
