@@ -454,7 +454,7 @@ git log $COMMIT_HASH_START..$COMMIT_HASH_END --pretty="%H"
 git log $COMMIT_HASH_START~1..$COMMIT_HASH_END --pretty="%H"
 ```
 
-If a valid starting commit hash is not specified/found, then the hash should default to either the commit hash of the last tag, or the commit hash of the first commit. Note that there may be more than one root commit depending on the git tree, and a changelog should ideally be generated using known start and end commit hashes (see [this discussion](#https://stackoverflow.com/questions/5188914/how-to-show-the-first-commit-by-git-log) for more details).
+If a valid starting commit hash is not specified/found, then the hash should default to either the commit hash of the last tag, or the commit hash of the first commit. Note that there may be more than one root commit depending on the git tree, and a changelog should ideally be generated using known start and end commit hashes (see [this discussion](https://stackoverflow.com/questions/5188914/how-to-show-the-first-commit-by-git-log) for more details).
 
 ```bash
 # get commit hash of last tag (will throw error if no tags present)
@@ -569,6 +569,7 @@ Using an object like this in conjunction with some template files such as mustac
 
 > [!example] Patch
 > *Patch*: {summary} ({hash})
+>
 > - {trailers}
 
 These changelog prompts could be inserted into the `unreleased` version section of a changelog as suggested by [keep a changelog](https://keepachangelog.com/en/1.1.0) (or some custom `release prompts` section etc. to indicate that they are auto-generated notes). Once included in the changelog, these prompts could either be used directly for the changelog entry at the release of the next version, or more appropriately should be used as *prompts* to inform the writing of more human-readable changelog notes.
