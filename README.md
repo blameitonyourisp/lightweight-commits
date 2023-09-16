@@ -235,6 +235,55 @@ Consult the following table for descriptions of the build and revert verbs.
 
 ## Examples
 
+See below for an example of a standard commit with the correct format, and some build, revert, and merge commit title examples.
+
+### Regular
+See below for an example of a full, generic commit with title, body, and git trailers. The body contains all of the probable required sections for describing changes made by a commit. Note that, as [described above](#body), each section in the body is labelled for clarity. The body content also displays examples of most of the suggested allowable markup (emphasis, paragraphs, lists, and references)
+
+```
+ext! Remove useful feature
+
+WHAT: Remove useful feature, replaced by updated dependency
+
+WHY: Last update to dependency XYZ (see commit <hash>) adds new
+functionality which supersedes functionality provided by this existing
+feature. Here is a *very important* phrase.
+
+MIGRATION: Stop using this feature, and instead make calls to package
+XYZ.newFeature. Users will need to provide the new function with the
+following data (for more information see here [^1]):
+- Client name
+	- First name
+	- Last name
+- Client age
+
+[^1]: https://link.com/goes/here
+
+closes: ABC-123
+scope: path/to/module
+```
+
+### Build, Revert, and Merge
+See below for commit titles for build, revert, and merge commits. These titles may follow a more strict/generic format simply because of the nature of changes to code/git history which are occurring.
+
+Build commit titles may include further brief details of the changes/features which are being built. However, since a build commit only changes distributed code according to how the source code has changed since the last build (i.e. a build commit does not change source code), no unique commit title or details are particularly required.
+
+```
+bld? Build
+```
+
+Revert commits MUST follow the format below, where the hash fragment must uniquely identify the reverted hash from git history (git requires a minimum of 4 characters to uniquely identify a commit). Obviously the hash fragment can be anywhere up to the full hash length of 40 characters, although this would cause the commit title to be longer than the 50 character limit (it is recommended to use the standard short hash length instead as shown below). No other details should be included in the title, and details of the reverted changes etc. may be expanded on in the body.
+
+```
+rvt? Revert 116cd42
+```
+
+Merge commit titles may mention which branch is being merged into which other branch. Further details of the merge, for instance if it is a feature branch being merged into main etc., should obviously be reserved for the commit body.
+
+```
+mrg? Merge branchA into branchB
+```
+
 ## Template
 
 ## Changelog
