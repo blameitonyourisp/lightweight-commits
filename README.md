@@ -266,7 +266,7 @@ scope: path/to/module
 ### Build, Revert, and Merge
 See below for commit titles for build, revert, and merge commits. These titles may follow a more strict/generic format simply because of the nature of changes to code/git history which are occurring.
 
-Build commit titles may include further brief details of the changes/features which are being built. However, since a build commit only changes distributed code according to how the source code has changed since the last build (i.e. a build commit does not change source code), no unique commit title or details are particularly required.
+Build commit titles may include further brief details of the changes or features which are being built. However, since a these commits only changes distributed code according to how the source code has changed since the last build (i.e. a build commit does not change source code), no unique commit title or details are particularly required.
 
 ```
 bld? Build
@@ -391,7 +391,183 @@ Note that git will ignore trailing whitespace, and will ignore double line break
 
 ## Changelog
 
+By following a well defined title format, and using a broad set of specified title verbs, it is possible to parse each commit, determining which [changelog category](changelog-categories) the commit belongs to, and further subdividing into breaking (major) changes, minor changes, and patches.
+
+Please see the following list for examples of existing projects which create changelog output from commits following a specific format (usually adjacent to the [conventional commit format](https://www.conventionalcommits.org/en/v1.0.0)).
+
+- https://github.com/github-changelog-generator/github-changelog-generator
+- https://github.com/git-chglog/git-chglog
+- https://github.com/CookPete/auto-changelog
+- https://github.com/conventional-changelog/conventional-changelog
+
+Note that since the lightweight commit format is is a custom commit format, and since the changelog generators referenced below are fairly "heavy" in terms of configuring them for custom usage, it is probably more appropriate to write your own custom script to parse git commits following the lightweight format.
+
 ### Parsing Git Trailers
+Note that [git trailers](https://git-scm.com/docs/git-interpret-trailers) may be parsed directly from a string, file or git commit object in multiple ways. Primarily we should use the `%(trailers)` placeholder when specifying a string for the `--pretty` option using `git log` as shown in the following code block (see the [git documentation](https://git-scm.com/docs/pretty-formats) for more detail on pretty formatting).
+
+```bash
+# logs git trailers of a specific commit
+git log $COMMIT_HASH -1 --pretty="%(trailers)"
+```
+
+Alternatively, we can pipe the printed output of `git log` or `git format-patch` to `git interpret-trailers` as shown in [this discussion](https://stackoverflow.com/questions/69532088/get-git-trailer-value-and-save-as-variable). This can be achieved either by piping the result directly, or by supplying a path to a file containing the `git log` output.
+
+```bash
+# pipe result directly
+git log $COMMIT_HASH -1 --pretty="%B" | git interpret-trailers --parse
+
+# interpret-trailers can also take a path to a file
+git log $COMMIT_HASH -1 --pretty="%B" > commit-message.txt
+git interpret-trailers --parse commit-message.txt
+```
+
+### Parsing Git Commits
+As shown [above](#parsing-git-trailers), parsing [git trailers](https://git-scm.com/docs/git-interpret-trailers) is trivial using the `--pretty` option. Using a few more placeholders, it is possible to parse all information required from a commit to generate [changelog prompt](#changelog-prompts) objects. The following command will parse all this information.
+
+```bash
+# logs long hash, summary, and git trailers of a specific commit
+git log $COMMIT_HASH -1 --pretty="%H%n%h%n%as%n%s%n%(trailers)"
+```
+
+In order, this command will return the following data separated by single line breaks:
+
+1. `%H` Long commit hash
+2. `%h` Short commit hash
+3. `%as` Author date (`YYYY-MM-DD`)
+4. `%s` Commit summary (title of commit)
+5. `%(trailers)` [git trailers](https://git-scm.com/docs/git-interpret-trailers) (each separated themselves by single line breaks)
+
+To fetch a list of git commits, use `git log` with the appropriate `--pretty` option to list all long commit hashes separated by line breaks. All entries in a changelog should list the start and end short hashes; by default, when parsing git commits for the purposes of updating the changelog, the start commit hash will be equal to the end commit hash listed in the most recent changelog entry. 
+
+```bash
+# get all commit hashes since a certain commit (exculding start commit)
+git log $COMMIT_HASH_START..HEAD --pretty="%H"
+
+# specify start and end commit hashes (exculding start commit)
+git log $COMMIT_HASH_START..$COMMIT_HASH_END --pretty="%H"
+
+# to include starting commit in output, use "~" (tilde) to specify revision range
+git log $COMMIT_HASH_START~1..$COMMIT_HASH_END --pretty="%H"
+```
+
+If a valid starting commit hash is not specified/found, then the hash should default to either the commit hash of the last tag, or the commit hash of the first commit. Note that there may be more than one root commit depending on the git tree, and a changelog should ideally be generated using known start and end commit hashes (see [this discussion](#https://stackoverflow.com/questions/5188914/how-to-show-the-first-commit-by-git-log) for more details).
+
+```bash
+# get commit hash of last tag (will throw error if no tags present)
+git log $(git describe --tags --abbrev=0) -1 --pretty="%H"
+
+# get first commit hash
+git rev-list --max-parents=0 HEAD
+
+# git first commit hash using linux "head" command
+git log --reverse --pretty="%H" | head -1
+```
+
+When parsing commits to generate [changelog prompts](#changelog-prompts), only commits on the main/deployment branch should be of interest. Branches should be used for developing features etc., then merged appropriately to the main branch for deployment. The commit hashes used for generating [changelog prompts ](#changelog-prompts)should therefore be commits on the main branch. This version tags etc. sh means that any script used for generating [changelog prompts](#changelog-prompts) should be run from the main branch such that the `HEAD` commit is a main branch commit, and would be limited to use on the main branch (or version tags on other branches should follow a separate format).
+
+### Changelog Categories
+Consult the following table for a set of standard categories which may be included in an changelog entry for a new version or release (depending on the changes made since the last release, some or all of the following categories will be included in a new changelog entry). 
+
+The standard set of categories chosen are mainly based on the suggested categories from the [keep a changelog](https://keepachangelog.com/en/1.1.0) project, combined with additional commit title [summary verbs](#summary-verbs) for [feature lifecycle changes](#feature-lifecycle-changes) and others which may cause a [semver](https://semver.org/) version change. The added categories are for increased separation between changes which cause different minimum [semver](https://semver.org/) version changes: by adding `Rewritten` and `Modified` as changelog release categories, all categories now have a *predominant* minimum [semver](https://semver.org/) version change associated with changes/commits in that category. 
+
+`Performance` and `Other` are added as they are common extensions ([see here](https://docs.gitlab.com/ee/development/changelog.html)) to the categories suggested to the [keep a changelog](https://keepachangelog.com/en/1.1.0) project. `Performance` allows fixes to be further separated into general bug fixes, security fixes, and performance fixes. `Other` obviously allows flexibility, especially when the changelog category of a commit cannot be automatically inferred for any given reason (in this case `Other` allows for the commit to be prompted/included in the generated release notes, and correctly categorised by hand later). 
+
+`Dependencies` is added to cover the remaining title [summary verbs](#summary-verbs) which may give rise to a [semver](https://semver.org/) version change. Given that dependency changes are less frequent, and given that, where possible, code changes when updating a dependency should not force any [semver](https://semver.org/) version change (especially avoiding any breaking changes), `Dependencies` are grouped as a single changelog category rather than separating into categories for the `Bump`, `Update`, `Upgrade`, and `Migrate` title [summary verbs](#summary-verbs).
+
+The title [summary verbs](#summary-verbs) `Test`, `Lint`, `Refactor`, `Build`, and `Revert` have no dedicated changelog category as these commits should not normally be appearing in any changelog release note. In the event that a commit with one of these summary verbs does produce a [semver](https://semver.org/) version change, the `Other` changelog category should be used. When parsing commits for a new release, any revert commits encountered should be used to remove the reverted commit from the revision list (list of commits being processed); if the list is consumed from newest to oldest, then obviously any revert commit will be encountered *before* the commit being reverted, and it is possible to remove that commit *before* it is processed.
+
+As with categories from the [keep a changelog](https://keepachangelog.com/en/1.1.0) project, changelog categories are past tense version of the imperative mood verbs which would otherwise be used in commit titles.
+
+The semver column refers to the *most common* minimum [semver](https://semver.org/) version change that will be required by changes in this category, however *any* category may include changes which require *any* minimum [semver](https://semver.org/) version change. In every category, the [changelog prompt](#changelog-prompts) generated for each change will list the inferred minimum [semver](https://semver.org/) version change alongside the prompt. In this case of this table, "feature" may apply to config files, documentation, or any other external or internal feature of the repository.
+
+| Category       | Semver | Description                                                  |
+| -------------- | ------ | ------------------------------------------------------------ |
+| `Rewritten`    | major  | Changes which rewrite a feature in a manner which causes a breaking change |
+| `Removed`      | major  | Removal of a feature which has probably been previously deprecated |
+| `Added`        | minor  | Addition of a feature                                        |
+| `Changed`      | minor  | Changes to a feature giving rise to a minor version change   |
+| `Deprecated`   | minor  | Deprecation of a feature which will likely be removed at the next major version |
+| `Modified`     | patch  | Changes to a feature giving rise to a patch version change   |
+| `Fixed`        | patch  | Generic bug fixes                                            |
+| `Security`     | patch  | Bug fixes or changes concerning security issues              |
+| `Performance`  | patch  | Bug fixes or changes concerning performance issues           |
+| `Dependencies` | any    | Changes which bump, update, upgrade or migrate dependencies  |
+| `Other`        | any    | Changes which do not have a category which can be automatically inferred |
+
+### Changelog Format
+See below for an example format of a new release section in a changelog using lightweight commits to auto-generate prompts for each commit since the last release which may be expanded on and or merged by the author to create more succinct, human readable changelog entries. The example format is a handlebars template for a section of a markdown changelog.
+
+```handlebars
+<!-- INSERT_AUTO_CHANGELOG_HERE -->
+
+## [unreleased~{{tag}}](https://github.com/{{user}}/{{repo}}/tags) ({{date}}) [{{shortHash}}](https://github.com/{{user}}/{{repo}}/tree/{{longHash}})
+
+### Release Highlights
+{{#categories}}
+{{> category}}
+{{/categories}}
+```
+
+See below for the handlebars category partial, which is the format for each [category](#changelog-categories) within a new release section of the changelog (depending on the changes included in the new release/version, some or all of the [changelog categories](#changelog-categories) may be included). The array of commits provided to render this template should be ordered with all breaking (major) changes first, followed by minor changes, and finally patch changes. This ensures that the most important/dangerous changes are given precedence at the top of any given category.
+
+```handlebars
+
+### {{title}}
+
+{{#commits}}
+{{> prompt}}
+{{/commits}}
+```
+
+See below for the handlebars prompt partial, which is the prompt format for each commit since the last version/release (or for all commits in the desired revision/commit range), and follows the suggestions listed in the [changelog prompts](#changelog-prompts) section. Commits marked as internal only changes (`=` [semver](https://semver.org/) flag) should not be listed/prompted. 
+
+```handlebars
+- {{semver}}: {{summary}} ([{{shortHash}}](https://github.com/{{user}}/{{repo}}/tree/{{longHash}}))
+{{#trailers}}
+    - {{key}}: {{value}}
+{{/trailers}}
+```
+
+The `{{semver}}` value should be a string reflecting the minimum [semver](https://semver.org/) version change required by the changes in the given commit:
+
+1. `**BREAKING CHANGE**` Major changes rendered in **bold** and ALL CAPS
+2. `*Minor*` Minor changes rendered with *italic* emphasis
+3. `*Patch*` Patch changes rendered with *italic* emphasis
+4. `*Unkown*` Where the minimum [semver](https://semver.org/) version change cannot be inferred from the commit title, render as unknown with *italic* emphasis
+
+### Changelog Prompts
+By using commits formatted in a way which allows the inference of both the [semver](https://semver.org/) version impact of a commit and the [changelog category](#changelog-categories) of a commit, all commits can be parsed into objects reflecting these properties. The parsed commit object could look something like this for each commit:
+
+```json
+{
+	"commit": {
+		"hash": "<long-commit-hash>"
+		"summary": "<regex-separated-summary>"
+		"trailers": [
+			{ "key": "scope", "value": "path/to/module" }
+		] 
+	},
+	"semver": "minor",
+	"category": "added"
+}
+```
+
+Using an object like this in conjunction with some template files such as mustache templates, it is then easy to create changelog "prompt entries" for every commit (excluding those marked as internal). Such prompt entries could appear as follows (listed underneath their respective [changelog categories](#changelog-categories), with breaking changes listed at the top of each category):
+
+> [!example] Major Change
+> **BREAKING CHANGE**: {summary} ({hash})
+> - {trailers}
+
+> [!example] Minor Change
+> *Minor*: {summary} ({hash})
+>
+> - {trailers}
+
+> [!example] Patch
+> *Patch*: {summary} ({hash})
+> - {trailers}
+
+These changelog prompts could be inserted into the `unreleased` version section of a changelog as suggested by [keep a changelog](https://keepachangelog.com/en/1.1.0) (or some custom `release prompts` section etc. to indicate that they are auto-generated notes). Once included in the changelog, these prompts could either be used directly for the changelog entry at the release of the next version, or more appropriately should be used as *prompts* to inform the writing of more human-readable changelog notes.
 
 ## Roadmap
 
