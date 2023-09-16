@@ -178,6 +178,61 @@ The [semver](https://semver.org/) flag should always be decided solely based on 
 
 ## Summary Verbs
 
+Each git commit summary must start with an imperative mood verb reflecting the *type* of *code change* which the commit makes. As mentioned above, the summary verb of a given commit can often be used with selection of [semver](https://semver.org/) flag. The flag used for a given commit title should entirely depend on the changes made, although the notes below may mention common flags for each summary verb.
+
+### Feature Lifecycle Changes
+Consult the following table for standard "lifecycle" commits which may be made for any given feature. These verbs cover the normal development of a feature from the initial addition of the feature to the repository, to different types of changes which may be made to the feature, and to the possible removal of the feature from the repository. In this case "feature" may apply to config files, documentation, or any other external or internal feature of the repository.
+
+| Verb        | Description                                                  |
+| ----------- | ------------------------------------------------------------ |
+| `Add`       | Addition of a new feature, commonly requiring a semver minor update for additions to the external API |
+| `Modify`    | Patch changes to a feature which are forward and backward compatible with previous version/commits, commonly requiring a semver patch update for modifications to the external API |
+| `Change`    | Minor, backward compatible only changes to a feature, commonly requiring a semver minor update for changes to the external API |
+| `Rewrite`   | Major, breaking changes to a feature, commonly requiring a semver major update for rewrites of a feature of the external API |
+| `Deprecate` | Deprecate a feature for future removal, commonly requiring a semver minor update for deprecation of a feature of the external API |
+| `Remove`    | Remove a previously deprecated feature, commonly requiring a semver minor update for removal of a feature of the external API |
+
+In the event that changes to a feature make a breaking change and warrant a [semver](https://semver.org/) major version number update (i.e. a `Rewrite` in the table above), consider instead deprecating the existing feature (to be removed at a later date at the same time as other major changes), and adding a new, rewritten version of the feature under a new name. Compared to directly rewriting the feature and triggering a major update, this allows for only a minor, backwards compatible update to occur, cutting down on the number of major updates required.
+
+### Fixes & Tests
+Consult the following table for commits concerning testing, fixing bugs, resolving security issues, and improving code performance.
+
+| Verb      | Description                                                  |
+| --------- | ------------------------------------------------------------ |
+| `Fix`     | Bug fixes, commonly requiring a semver patch update for fixes which propagate to the external API |
+| `Test`    | Changes, additions, and removals from the test suite, commonly requiring no semver version update as tests are usually internal only in nature |
+| `Secure`  | Change or bug fix addressing security of a feature, commonly requiring a semver patch or minor update for security fixes to the external API, depending on severity of the security issue |
+| `Improve` | Change or bug fix improving performance of a feature, commonly requiring a semver patch update for improvements to the performance of the external API |
+
+### Code Style
+Consult the following table for commits concerning code formatting, changes to naming conventions etc.
+
+| Verb       | Description                                                  |
+| ---------- | ------------------------------------------------------------ |
+| `Lint`     | Lint code involving changes *strictly* to formatting which do not alter the released code, and therefore should not require semver version update |
+| `Refactor` | Minor changes to names and statement orders etc., commonly requiring a semver patch or minor update for refactoring code which is part of the external API, depending on the nature of the refactor |
+
+### Dependencies
+Consult the following table for commits which update repository dependencies or migrate to a new dependency fulfilling the same purpose/feature set as the old dependency (for example switching between image processing libraries). Note that these commits may be tiny or fairly large depending on the amount of code which has to be updated to work with the API of the new/updated dependency. Where appropriate, it may be sensible to split these changes into multiple commits if code changes are extensive, and/or cover many parts of the repository (for instance when upgrading between major versions or migrating to a different dependency).
+
+| Verb      | Description                                                  |
+| --------- | ------------------------------------------------------------ |
+| `Bump`    | Bump (semver patch) version of a dependency, may require any or no update to the semver version number depending on changes required to use the updated dependency |
+| `Update`  | Update (semver minor) version of a dependency, may require any or no update to the semver version number depending on changes required to use the updated dependency |
+| `Upgrade` | Upgrade (semver major) version of a dependency, may require any or no update to the semver version number depending on changes required to use the updated dependency |
+| `Migrate` | Migrate to a different dependency, may require any or no update to the semver version number depending on changes required to use the new dependency |
+
+A commit which adds a dependency will not change internal or external code, and will only be adding the dependency for use in future features. Therefore, for adding a dependency in the first instance, since no existing code in the repository will be using that dependency at time of adding, we can use the `Add` verb in conjunction with the `cfg` (config) [title noun](#title-nouns).
+
+### Build, Revert & Merge
+Consult the following table for descriptions of the build and revert verbs.
+
+| Verb     | Description                                                  |
+| -------- | ------------------------------------------------------------ |
+| `Build`  | Build new release, commonly triggers new release of package accompanied by a new version number, change required to semver version number depends on previous commits |
+| `Revert` | Revert commit using reverted commit hash as rest of title, change required to semver version number depends on the reverted commit |
+| `Merge`  | Merge commits, commonly referencing the merged branches in the title, and containing merge details in the body |
+
 ## Examples
 
 ## Template
