@@ -194,7 +194,7 @@ Consult the following table for standard "lifecycle" commits which may be made f
 
 In the event that changes to a feature make a breaking change and warrant a [semver](https://semver.org/) major version number update (i.e. a `Rewrite` in the table above), consider instead deprecating the existing feature (to be removed at a later date at the same time as other major changes), and adding a new, rewritten version of the feature under a new name. Compared to directly rewriting the feature and triggering a major update, this allows for only a minor, backwards compatible update to occur, cutting down on the number of major updates required.
 
-### Fixes & Tests
+### Fixes and Tests
 Consult the following table for commits concerning testing, fixing bugs, resolving security issues, and improving code performance.
 
 | Verb      | Description                                                  |
@@ -224,8 +224,8 @@ Consult the following table for commits which update repository dependencies or 
 
 A commit which adds a dependency will not change internal or external code, and will only be adding the dependency for use in future features. Therefore, for adding a dependency in the first instance, since no existing code in the repository will be using that dependency at time of adding, we can use the `Add` verb in conjunction with the `cfg` (config) [title noun](#title-nouns).
 
-### Build, Revert & Merge
-Consult the following table for descriptions of the build and revert verbs.
+### Build, Revert and Merge
+Consult the following table for descriptions of the build, revert, and merge verbs.
 
 | Verb     | Description                                                  |
 | -------- | ------------------------------------------------------------ |
@@ -263,7 +263,7 @@ closes: ABC-123
 scope: path/to/module
 ```
 
-### Build, Revert, and Merge
+### Build
 See below for commit titles for build, revert, and merge commits. These titles may follow a more strict/generic format simply because of the nature of changes to code/git history which are occurring.
 
 Build commit titles may include further brief details of the changes or features which are being built. However, since a these commits only changes distributed code according to how the source code has changed since the last build (i.e. a build commit does not change source code), no unique commit title or details are particularly required.
@@ -272,11 +272,15 @@ Build commit titles may include further brief details of the changes or features
 bld? Build
 ```
 
+### Revert
+
 Revert commits MUST follow the format below, where the hash fragment must uniquely identify the reverted hash from git history (git requires a minimum of 4 characters to uniquely identify a commit). Obviously the hash fragment can be anywhere up to the full hash length of 40 characters, although this would cause the commit title to be longer than the 50 character limit (it is recommended to use the standard short hash length instead as shown below). No other details should be included in the title, and details of the reverted changes etc. may be expanded on in the body.
 
 ```
 rvt? Revert 116cd42
 ```
+
+### Merge
 
 Merge commit titles may mention which branch is being merged into which other branch. Further details of the merge, for instance if it is a feature branch being merged into main etc., should obviously be reserved for the commit body.
 
@@ -286,7 +290,7 @@ mrg? Merge branchA into branchB
 
 ## Template
 
-Using a git commit template can make it easier to create uniformly formatted git commits, and can serve as a good aide memoir for following custom formats. The git commit template can be set by pointing the git config to your message file as follows `git config --global commit.template ~/.gitmessage`. See the following code block for my commit template, or view the file at `~/.gitmessage`.
+Using a git commit template can make it easier to create uniformly formatted git commits, and can serve as a good aide memoir for following custom formats. The git commit template can be set by pointing the git config to your message file as follows `git config --global commit.template ~/.gitmessage`. See the following code block for my commit template, or view the file at `~/.gitmessage`. This template also serves as an exhaustive specification for the format of lightweight commits.
 
 ```bash
 
@@ -570,6 +574,12 @@ Using an object like this in conjunction with some template files such as mustac
 These changelog prompts could be inserted into the `unreleased` version section of a changelog as suggested by [keep a changelog](https://keepachangelog.com/en/1.1.0) (or some custom `release prompts` section etc. to indicate that they are auto-generated notes). Once included in the changelog, these prompts could either be used directly for the changelog entry at the release of the next version, or more appropriately should be used as *prompts* to inform the writing of more human-readable changelog notes.
 
 ## Roadmap
+
+The lightweight commit format is feature complete as of git tag `v1.0.0`. Minor changes to the specification may be made, but in all cases changes should attempt to be backwards compatible such that existing commits which adopted this format remain consistent with newer version/additions to the format. 
+
+This commit format is an opinionated specification maintained by an individual developer, if you would like to use this specification in your own commits, and would like to make changes, feel free to fork this repository and release your own version(s). Please see below for proposed new features which may be added in later updates:
+
+- Documentation site (i.e. external from the existing github repository) for the lightweight commit format
 
 ## License
 
